@@ -1,0 +1,85 @@
+cargo-features = ["profile-rustflags"]
+
+[package]
+name = "balloon-template"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+libm = "0.2.7"
+libc-print = "0.1"
+apollo = { git = "https://github.com/NexusXe/libapollo" }
+rand = { version = "0.8.5", features = ["small_rng"], default-features = false }
+ufmt = "0.2.0"
+panic-halt = "0.2"
+
+[features]
+full_std = [] 
+
+[profile.dev]
+panic = "abort"
+opt-level = 1
+debug = true
+debug-assertions = false
+overflow-checks = false
+lto = false
+incremental = true
+codegen-units = 16
+
+[profile.release]
+panic = "abort"
+codegen-units = 1
+debug = false
+strip = true
+lto = true
+opt-level = "s"
+rustflags = [
+    "-C", "inline-threshold=25",
+    "-C", "code-model=small",
+    "-C", "target-cpu=native"
+]
+
+[profile.dev.package."*"] # +
+debug = true
+strip = false
+codegen-units = 1
+opt-level = 2
+rustflags = [
+    "-C", "inline-threshold=25",
+    "-C", "code-model=small",
+    "-C", "target-cpu=native"
+]
+
+[profile.release.package."*"] # +
+incremental = true
+codegen-units = 1
+debug = false
+strip = true
+opt-level = "s"
+rustflags = [
+    "-C", "inline-threshold=25",
+    "-C", "code-model=small",
+    "-C", "target-cpu=native"
+]
+
+[profile.dev.build-override]
+codegen-units = 1
+debug = false
+strip = true
+opt-level = 3
+rustflags = [
+    "-C", "inline-threshold=25",
+    "-C", "code-model=small",
+    "-C", "target-cpu=native"
+]
+
+[profile.release.build-override]
+codegen-units = 1
+debug = false
+strip = true
+opt-level = "s"
+rustflags = [
+    "-C", "inline-threshold=25",
+    "-C", "code-model=small",
+    "-C", "target-cpu=native"
+]
